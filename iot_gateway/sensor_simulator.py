@@ -4,6 +4,13 @@ import os
 import time
 import logging
 from datetime import datetime
+import sys
+
+# Paths setup
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if BASE_DIR not in sys.path:
+    sys.path.append(BASE_DIR)
+
 from alerts_engine.notifier import notifier
 from backend_dashboard.config import *
 
@@ -145,3 +152,14 @@ class SmartBinSimulator:
             logger.error(f"Collection Reset Failed: {e}")
 
 iot_simulator = SmartBinSimulator()
+
+if __name__ == "__main__":
+    logger.info("--- CleanCity AI IoT Simulator Started ---")
+    iot_simulator.initialize_iot_grid()
+    
+    try:
+        while True:
+            iot_simulator.update_telemetry()
+            time.sleep(5) # Update every 5 seconds
+    except KeyboardInterrupt:
+        logger.info("Simulator Stopping...")

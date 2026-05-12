@@ -134,10 +134,21 @@ if app_page == "🌍 City Map Operations":
 
         for _, b in bin_data.iterrows():
             color = CRITICAL_COLOR if b['fill_level'] >= 80 else WARNING_COLOR if b['fill_level'] >= 60 else THEME_COLOR
+            # Hardware Status Marker (Outer Ring if Real)
+            if b['status'] == 'Real':
+                folium.CircleMarker(
+                    location=[b['lat'], b['lon']],
+                    radius=20,
+                    color="#00D4FF",
+                    weight=2,
+                    fill=False,
+                    popup="REAL HARDWARE ACTIVE"
+                ).add_to(m)
+                
             folium.CircleMarker(
                 location=[b['lat'], b['lon']],
                 radius=10 if b['fill_level'] < 80 else 15,
-                popup=f"{b['location']}: {b['fill_level']}%",
+                popup=f"{b['location']}: {b['fill_level']}% (Mode: {b['status']})",
                 color=color, fill=True, fill_color=color, fill_opacity=0.6,
             ).add_to(m)
             
@@ -169,7 +180,14 @@ if app_page == "🌍 City Map Operations":
             
             st.write("**Recommended Collection Sequence:**")
             for i, b in enumerate(route, 1):
-                st.markdown(f"<div style='border-left:4px solid {CRITICAL_COLOR if b['fill_level']>=80 else WARNING_COLOR}; padding-left:10px; margin-bottom:10px;'>{i}. 📍 {b['location']} ({b['fill_level']}%)</div>", unsafe_allow_html=True)
+                mode_tag = "📡 REAL" if b['status'] == 'Real' else "🤖 SIM"
+                border_col = CRITICAL_COLOR if b['fill_level']>=80 else WARNING_COLOR
+                st.markdown(f"""
+                    <div style='border-left:4px solid {border_col}; padding-left:10px; margin-bottom:10px;'>
+                        <small style='color:#8B949E;'>{mode_tag}</small><br>
+                        {i}. 📍 {b['location']} (<b>{b['fill_level']}%</b>)
+                    </div>
+                """, unsafe_allow_html=True)
             
             if st.button("🚀 Dispatch & Empty Bins"):
                 # Simulate real collection
@@ -194,9 +212,12 @@ elif app_page == "📊 Sensor Telemetry":
             for i, (_, b) in enumerate(row_df.iterrows()):
                 with cols[i]:
                     color = CRITICAL_COLOR if b['status'] == 'CRITICAL' else THEME_COLOR
+                    mode_tag = "📡 REAL HARDWARE" if b['status'] == 'Real' else "🤖 SIMULATED"
+                    mode_color = "#00D4FF" if b['status'] == 'Real' else "#8B949E"
                     st.markdown(f"""
                         <div style='background:#161B22; padding:20px; border-radius:20px; border:1px solid {color}55;'>
-                            <h4 style='margin:0;'>{b['location']}</h4>
+                            <small style='color:{mode_color}; font-weight:bold;'>{mode_tag}</small>
+                            <h4 style='margin:5px 0;'>{b['location']}</h4>
                             <p style='color:{color}; font-size:1.8rem; margin:10px 0; font-weight:800;'>{b['fill_level']}%</p>
                             <div style='font-size:0.8rem; color:#8B949E;'>
                                 🔋 Battery: {b['battery']}%<br>
