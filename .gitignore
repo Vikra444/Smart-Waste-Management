@@ -1,0 +1,54 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+.env
+
+# Database (contains real data - do not commit)
+smart_bins.db
+*.db-shm
+*.db-wal
+
+# AI Model weights (large binary files)
+*.h5
+*.keras
+ai_engine/models/*.h5
+ai_engine/models/*.keras
+
+# Node / React
+frontend_react/node_modules/
+frontend_react/dist/
+frontend_react/.tanstack/
+frontend_react/.vinxi/
+frontend_react/.output/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Logs
+*.log
+
+# Build artifacts
+*.egg-info/
+dist/
+build/
+
+# Flutter (legacy)
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+
+# Archive
+archive/
